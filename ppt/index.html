@@ -1,0 +1,224 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>ppt</title>
+		<style>
+			*
+			{
+				margin:0;
+				padding:0;				
+			}
+			body
+			{
+				background-color:#fff;
+				font-size:14px;
+				font-family:'Avenir Next';
+				color:#555;
+				-webkit-font-smoothing:antialiased; /*字体抗锯齿*/
+			}
+			.slider
+			{
+				margin:0 auto;
+			}
+			.main,.main-i
+			{
+				position:relative;
+				height:400px;
+				width:1280px;
+				margin:0 auto;
+			}
+			.main
+			{
+				overflow:hidden;
+			}
+			.main-i
+			{
+				position:absolute;				
+				left:50%;
+				top:0;
+				opacity:0;
+				-webkit-transition:all .5s;	
+			}
+			.main-i img
+			{
+				position:absolute;
+				top:50%;
+				left:0;
+			}
+			.caption
+			{
+				position:absolute;
+				top:30%;
+				right:60%;			
+			}
+			.caption h2
+			{
+				font-size:40px;
+				line-height:50px;
+				color:#b5b5b5;
+				text-align:right;
+				margin-right:-45px;
+				opacity:0;
+			}
+			.caption h3
+			{
+				font-size:70px;
+				line-height:80px;
+				color:#000000;
+				text-align:right;
+				font-family:'Open Sans Condensed';
+				margin-right:45px;
+				opacity:0;
+			}
+			.main-i_active
+			{
+				opacity:1;
+				left:0;	
+			}
+			.main-i_active h2,.main-i_active h3
+			{
+				margin-right:0;				
+			}
+			.main-i_active h2,.main-i_active h3
+			{
+				opacity:1;
+				-webkit-transition:all .8s 0.5s;
+			}
+			.ctrl
+			{
+				width:100%;
+				height:13px;
+                line-height:13px;
+				text-align:center;				
+				position:relative;				
+				left:0;
+				bottom:0;
+			}
+			.ctrl-i
+			{
+				display:inline-block;
+				width:150px;
+				height:13px;
+				background-color:#666;
+				box-shadow:0 1px 1px rgba(0,0,0,.3);
+				position:relative;
+				margin-left:1px;
+			}			
+			.ctrl-i img
+			{
+				width:100%;
+				position:absolute;
+				bottom:50px;
+				left:0;	
+				-webkit-transition:all .2s;
+				opacity:0;
+			}
+			.ctrl-i:hover img
+			{
+				opacity:1;
+				bottom:13px;
+				-webkit-box-reflect: below 0px 
+				linear-gradient(transparent,transparent 50%,rgba(0,0,0,.5));
+			}
+			.ctrl-i:hover
+			{
+				background-color:#fofofo;
+			}
+		</style>
+	</head>
+	<body>
+		<!--修改 关键字替换，增加template id-->
+		<div class="slider">
+			<div class="main" id="template_main">
+				<div class="main-i" id="main-{{index}}">
+					<img class="picture" src="images/{{index}}.jpg"/>
+					<div class="caption">
+						<h2>{{h2}}</h2>
+						<h3>{{h3}}</h3>
+					</div>
+				</div>				
+			</div>
+			<div class="ctrl" id="template_ctrl">
+				<a class="ctrl-i" id="ctrl-{{index}}" href="javascript:switchSlider({{index}});">
+<img src="images/{{index}}.jpg"/></a>
+			</div>
+		</div>
+		<!--修改VIEW->Template(关键字替换)，增加template id -->
+		
+		<script>
+			//数据定义，实际开发中 由后台给出
+			var data=
+			[
+				{img:1,h2:"Creative",h3:"DUET"},
+				{img:2,h2:"Friendly",h3:"DEVIL"},
+				{img:3,h2:"Tranquilent",h3:"COMPATRIOT"},
+				{img:4,h2:"Insecure",h3:"HUSSLER"},
+				{img:5,h2:"loving",h3:"REBEL"},
+				{img:6,h2:"Passionate",h3:"SEEKER"},
+				{img:7,h2:"Crazy",h3:"FRIEND"}			
+			];
+			//定义通用函数
+			function g(id)
+			{
+				if(id.substr(0,1) == ".")
+				{
+					return document.getElementsByClassName(id.substr(1));
+				}
+				return document.getElementById(id);
+			}
+			//添加幻灯片操作（所有幻灯片和对应的按钮）
+			function addSliders()
+			{
+				var tpl_main = g("template_main").innerHTML.replace(/^\s*/,"").replace(/\s*$/,"");
+				var tpl_ctrl = g("template_ctrl").innerHTML.replace(/^\s*/,"").replace(/\s*$/,"");
+				var out_main = "";
+				var out_ctrl = "";
+				for(i in data)
+				{
+					var _html_main = tpl_main.replace(/{{index}}/g,data[i].img)
+									.replace(/{{h2}}/g,data[i].h2)
+									.replace(/{{h3}}/g,data[i].h3);
+					var _html_ctrl = tpl_ctrl.replace(/{{index}}/g,data[i].img);				
+					out_main += _html_main;	
+					out_ctrl += _html_ctrl;	
+				}
+				g("template_main").innerHTML = out_main;
+				g("template_ctrl").innerHTML = out_ctrl;
+			}
+			
+			function switchSlider(n)
+			{
+				var main = g("main-" + n);
+				var ctrl = g("ctrl-" + n);
+				var clear_main = g(".main-i");
+				var clear_ctrl = g(".ctrl-i");
+				for(i=0;i<clear_ctrl.length; i++)
+				{
+					clear_main[i].className = clear_main[i].className.replace("main-i_active","");
+					clear_ctrl[i].className = clear_ctrl[i].className.replace("ctrl-i_active","");
+				}				
+				main.className += " main-i_active";
+				ctrl.className += " ctrl-i_active";
+			}			
+			function movePictures()
+			{
+				var picture=g(".picture")
+				for(i=0; i<picture.length; i++)
+				{
+					picture[i].style.marginTop = (-1*picture[i].clientHeight/2) + 'px';
+				}
+			}			
+			window.onload = function()
+			{				
+				addSliders();
+				switchSlider(1);
+				setTimeout(function()
+					{
+						movePictures();
+					},100)
+			}
+			
+		</script>
+	</body>
+</html>
